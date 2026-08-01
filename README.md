@@ -1,0 +1,100 @@
+# Autonomous Research and Report Agent
+
+A LangGraph-based research pipeline that searches the web, verifies claims with an LLM, writes a report, and reviews the draft before returning the final result.
+
+## Pipeline
+
+```text
+Research -> Fact-check -> Write -> Critique
+                         ^          |
+                         |----------|
+                         revise until approved or max iterations reached
+```
+
+## Requirements
+
+- Python 3.10 or newer
+- A Tavily API key
+- A Groq API key
+- Git, if cloning the repository
+
+## Setup
+
+Clone the repository and enter its folder:
+
+```powershell
+git clone https://github.com/Abhi0833-eng/research-agent-langgraph.git
+cd research-agent-langgraph
+```
+
+Create and activate a virtual environment:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```powershell
+pip install -r requirements.txt
+```
+
+Create a file named `.env` in the project root:
+
+```env
+TAVILY_API_KEY=your_tavily_api_key
+GROQ_API_KEY=your_groq_api_key
+LANGSMITH_TRACING=false
+```
+
+Never commit `.env` or share its API keys.
+
+## Run
+
+Start the interactive application:
+
+```powershell
+python main.py
+```
+
+Enter a research question when prompted. The application searches for sources, extracts verified facts, drafts a report, and runs a critic review.
+
+## Test
+
+Run the standalone pipeline test:
+
+```powershell
+python test_research.py
+```
+
+## Project Structure
+
+```text
+research-agent-langgraph/
+|-- agents/
+|   |-- research_agent.py
+|   |-- fact_checker_agent.py
+|   |-- writer_agent.py
+|   `-- critic_agent.py
+|-- state/
+|   `-- schema.py
+|-- main.py
+|-- test_research.py
+|-- requirements.txt
+`-- .env                 local secrets, not committed
+```
+
+## Shared State
+
+`state/schema.py` defines the `ResearchState` TypedDict shared by every graph node. It stores the query, sources, verified facts, flagged issues, draft history, critique feedback, approval status, and iteration limits.
+
+## LangSmith Tracing
+
+LangSmith tracing is optional. Keep it disabled with:
+
+```env
+LANGSMITH_TRACING=false
+```
+
+To enable tracing, configure a valid `LANGSMITH_API_KEY` and `LANGSMITH_PROJECT` for the correct LangSmith workspace, then set `LANGSMITH_TRACING=true`.

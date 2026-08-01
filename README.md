@@ -94,6 +94,25 @@ If Render asks for payment verification, create a Docker Space at [huggingface.c
 
 The included `Dockerfile` starts the FastAPI interface on Hugging Face's port `7860`. Free Spaces can sleep after inactivity, so the first request after a pause may take longer.
 
+## Free Hosting: Streamlit Community Cloud
+
+Streamlit Community Cloud can host the browser interface directly from this GitHub repository:
+
+1. Open [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
+2. Click **Create app** and select this repository and the `main` branch.
+3. Set the main file path to `streamlit_app.py`.
+4. Open **Advanced settings** and add these secrets:
+
+```toml
+TAVILY_API_KEY = "your_tavily_api_key"
+GROQ_API_KEY = "your_groq_api_key"
+LANGSMITH_TRACING = "false"
+```
+
+5. Click **Deploy**. Streamlit will provide a public URL for users.
+
+The free tier may sleep when unused, and the first request after sleeping can take longer. API keys must be added as secrets, never committed to GitHub.
+
 ## Test
 
 Run the standalone pipeline test:
@@ -117,6 +136,7 @@ research-agent-langgraph/
 |   `-- index.html
 |-- app.py
 |-- render.yaml
+|-- streamlit_app.py
 |-- main.py
 |-- test_research.py
 |-- requirements.txt

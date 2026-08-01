@@ -58,3 +58,4 @@ yarl==1.24.5
 zstandard==0.25.0
 fastapi==0.141.1
 uvicorn==0.52.0
+streamlit==1.50.0

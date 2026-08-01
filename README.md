@@ -82,6 +82,18 @@ The repository includes `render.yaml` for deployment on Render:
 
 Render runs the service with `uvicorn app:app --host 0.0.0.0 --port $PORT` and checks `GET /health`.
 
+## Free Alternative: Hugging Face Spaces
+
+If Render asks for payment verification, create a Docker Space at [huggingface.co/new-space](https://huggingface.co/new-space):
+
+1. Choose an owner, enter a Space name, select **Docker**, and choose the free CPU hardware.
+2. Clone the new Space repository locally or upload the project files from this repository.
+3. In the Space **Settings**, add these secrets:
+    `TAVILY_API_KEY`, `GROQ_API_KEY`, and `LANGSMITH_TRACING=false`.
+4. Wait for the build to finish and open the Space URL.
+
+The included `Dockerfile` starts the FastAPI interface on Hugging Face's port `7860`. Free Spaces can sleep after inactivity, so the first request after a pause may take longer.
+
 ## Test
 
 Run the standalone pipeline test:

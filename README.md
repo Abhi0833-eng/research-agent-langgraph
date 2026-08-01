@@ -60,6 +60,16 @@ python main.py
 
 Enter a research question when prompted. The application searches for sources, extracts verified facts, drafts a report, and runs a critic review.
 
+## Web Interface
+
+Start the browser-based API and interface with Uvicorn:
+
+```powershell
+uvicorn app:app --reload
+```
+
+Open `http://127.0.0.1:8000` in a browser and submit a research question. The interface calls `POST /research` and displays the report, verified facts, flagged issues, and sources. A simple health check is available at `GET /health`.
+
 ## Test
 
 Run the standalone pipeline test:
@@ -79,6 +89,9 @@ research-agent-langgraph/
 |   `-- critic_agent.py
 |-- state/
 |   `-- schema.py
+|-- static/
+|   `-- index.html
+|-- app.py
 |-- main.py
 |-- test_research.py
 |-- requirements.txt

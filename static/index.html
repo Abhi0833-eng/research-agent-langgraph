@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Research Desk</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #607080;
+      --paper: #f7f4ed;
+      --panel: #fffdf8;
+      --line: #d9d6cc;
+      --accent: #ce4d2d;
+      --accent-dark: #9f351f;
+      --teal: #1e6865;
+      --shadow: 0 18px 45px rgba(46, 42, 33, .12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(206, 77, 45, .07), transparent 32%),
+        repeating-linear-gradient(0deg, rgba(23, 33, 43, .025) 0 1px, transparent 1px 5px),
+        var(--paper);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 54px 0 34px; display: flex; justify-content: space-between; gap: 24px; align-items: end; }
+    .eyebrow { color: var(--accent); font: 700 12px/1.2 Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 680px; margin: 12px 0 0; font-size: clamp(40px, 7vw, 78px); line-height: .94; font-weight: 700; letter-spacing: 0; }
+    .dek { max-width: 310px; margin: 0; color: var(--muted); font: 15px/1.55 Arial, sans-serif; }
+    .workspace { display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); gap: 22px; padding-bottom: 70px; }
+    .panel { background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .control { padding: 24px; align-self: start; position: sticky; top: 20px; }
+    label { display: block; margin-bottom: 10px; font: 700 12px/1.2 Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); }
+    textarea { width: 100%; min-height: 170px; resize: vertical; border: 1px solid var(--line); background: #fffefb; color: var(--ink); padding: 15px; font: 19px/1.45 Georgia, serif; outline: none; }
+    textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(206, 77, 45, .12); }
+    button { width: 100%; margin-top: 14px; padding: 14px 18px; border: 0; background: var(--accent); color: white; cursor: pointer; font: 700 13px/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    button:hover { background: var(--accent-dark); }
+    button:disabled { cursor: wait; opacity: .65; }
+    .hint { color: var(--muted); font: 12px/1.5 Arial, sans-serif; }
+    .output { min-height: 450px; padding: 28px 32px; }
+    .empty { min-height: 390px; display: grid; place-items: center; text-align: center; color: var(--muted); font: 15px/1.55 Arial, sans-serif; }
+    .empty strong { display: block; color: var(--ink); font: 700 26px/1.1 Georgia, serif; margin-bottom: 8px; }
+    .status { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 15px; margin-bottom: 24px; color: var(--muted); font: 12px/1.3 Arial, sans-serif; }
+    .status b { color: var(--teal); }
+    .report h2 { font-size: 27px; margin: 25px 0 8px; }
+    .report p { font-size: 18px; line-height: 1.65; margin: 0 0 15px; }
+    .details { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 18px; font: 13px/1.5 Arial, sans-serif; }
+    details { border-bottom: 1px solid var(--line); padding: 11px 0; }
+    summary { cursor: pointer; font-weight: 700; color: var(--teal); }
+    .details ul { padding-left: 20px; }
+    .details a { color: var(--accent-dark); }
+    .error { color: #a62d25; background: #fff0eb; border: 1px solid #edb2a4; padding: 12px; font: 13px/1.45 Arial, sans-serif; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 24px, 560px); }
+      header { display: block; padding-top: 34px; }
+      .dek { margin-top: 18px; max-width: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .control { position: static; }
+      .output { padding: 22px 19px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <div class="eyebrow">Autonomous research desk</div>
+        <h1>Turn a question into a grounded report.</h1>
+      </div>
+      <p class="dek">A four-stage research pipeline that searches, verifies, writes, and critiques in one pass.</p>
+    </header>
+
+    <section class="workspace">
+      <form class="panel control" id="research-form">
+        <label for="query">Research question</label>
+        <textarea id="query" name="query" required minlength="3" maxlength="500" placeholder="What is the condition of Gen Z in India?"></textarea>
+        <button id="submit" type="submit">Generate report</button>
+        <p class="hint">The report may take a minute while sources and review agents run.</p>
+      </form>
+
+      <section class="panel output" aria-live="polite">
+        <div class="empty" id="empty"><div><strong>Your report will appear here.</strong>Ask a focused question to begin.</div></div>
+        <div id="result" hidden>
+          <div class="status"><span id="meta"></span><b id="approval"></b></div>
+          <article class="report" id="report"></article>
+          <div class="details">
+            <details><summary>Verified facts</summary><ul id="facts"></ul></details>
+            <details><summary>Flagged issues</summary><ul id="issues"></ul></details>
+            <details><summary>Sources</summary><ul id="sources"></ul></details>
+          </div>
+        </div>
+        <div class="error" id="error" hidden></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const form = document.querySelector('#research-form');
+    const query = document.querySelector('#query');
+    const submit = document.querySelector('#submit');
+    const empty = document.querySelector('#empty');
+    const result = document.querySelector('#result');
+    const error = document.querySelector('#error');
+
+    function renderReport(markdown) {
+      const article = document.querySelector('#report');
+      article.replaceChildren();
+      markdown.split(/\n+/).filter(Boolean).forEach((line) => {
+        const heading = line.match(/^###?\s+(.+)/);
+        const element = document.createElement(heading ? 'h2' : 'p');
+        element.textContent = heading ? heading[1] : line.replace(/^[-*]\s+/, '');
+        article.appendChild(element);
+      });
+    }
+
+    function renderList(id, items, emptyText) {
+      const list = document.querySelector(id);
+      list.replaceChildren();
+      (items.length ? items : [emptyText]).forEach((item) => {
+        const entry = document.createElement('li');
+        entry.textContent = item;
+        list.appendChild(entry);
+      });
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const value = query.value.trim();
+      if (value.length < 3) return;
+      submit.disabled = true;
+      submit.textContent = 'Researching...';
+      empty.hidden = true;
+      result.hidden = true;
+      error.hidden = true;
+
+      try {
+        const response = await fetch('/research', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: value })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'The research request failed.');
+
+        renderReport(data.report);
+        document.querySelector('#meta').textContent = `${data.iterations} review iteration${data.iterations === 1 ? '' : 's'} · ${data.sources.length} sources`;
+        document.querySelector('#approval').textContent = data.approved ? 'Reviewed' : 'Needs review';
+        renderList('#facts', data.verified_facts, 'No verified facts returned.');
+        renderList('#issues', data.flagged_issues, 'No issues flagged.');
+        const sources = document.querySelector('#sources');
+        sources.replaceChildren();
+        data.sources.forEach((source) => {
+          const entry = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = source.url;
+          link.target = '_blank';
+          link.rel = 'noreferrer';
+          link.textContent = source.title || source.url;
+          entry.appendChild(link);
+          sources.appendChild(entry);
+        });
+        result.hidden = false;
+      } catch (requestError) {
+        error.textContent = requestError.message;
+        error.hidden = false;
+      } finally {
+        submit.disabled = false;
+        submit.textContent = 'Generate report';
+      }
+    });
+  </script>
+</body>
+</html>

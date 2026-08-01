@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: research-agent-langgraph
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: LANGSMITH_TRACING
+        value: "false"

@@ -70,6 +70,18 @@ uvicorn app:app --reload
 
 Open `http://127.0.0.1:8000` in a browser and submit a research question. The interface calls `POST /research` and displays the report, verified facts, flagged issues, and sources. A simple health check is available at `GET /health`.
 
+## Deploy on Render
+
+The repository includes `render.yaml` for deployment on Render:
+
+1. Sign in at [render.com](https://render.com) and choose **New > Blueprint**.
+2. Connect `Abhi0833-eng/research-agent-langgraph`.
+3. Select the `render.yaml` file and create the web service.
+4. In the service environment settings, add `TAVILY_API_KEY` and `GROQ_API_KEY` using your own keys. Keep them secret.
+5. Wait for the deployment to finish, then open the generated `onrender.com` URL.
+
+Render runs the service with `uvicorn app:app --host 0.0.0.0 --port $PORT` and checks `GET /health`.
+
 ## Test
 
 Run the standalone pipeline test:
@@ -92,6 +104,7 @@ research-agent-langgraph/
 |-- static/
 |   `-- index.html
 |-- app.py
+|-- render.yaml
 |-- main.py
 |-- test_research.py
 |-- requirements.txt
